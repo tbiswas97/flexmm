@@ -1,7 +1,7 @@
 # FlexMM
 
 FlexMM segments a caller-provided image by fitting flexible mixture models to
-features from VGG19, AlexNet, or DINOv3. Its posterior API consumes the fitted
+features from VGG-19, AlexNet, or DINOv3. Its posterior API consumes the fitted
 model's dynamic output shapes, so it does not depend on an experiment-specific
 response file or a fixed feature-grid size.
 
@@ -21,11 +21,12 @@ python -m pip install .
 
 For development checks, install `.[dev]` instead.
 
-## Quickstart
+## Quickstart with VGG-19
 
 Load an image as a NumPy array with shape `(height, width)`, `(height, width,
 3)`, or `(height, width, 4)`. FlexMM normalizes numeric images to `float32`
-RGB in the range `[0, 1]`.
+RGB in the range `[0, 1]`. VGG-19 is the default backend and the recommended
+starting point; Torchvision downloads its pretrained weights on first use.
 
 ```python
 from pathlib import Path
@@ -51,7 +52,8 @@ posterior = Posterior(
 means = posterior.analytical_mean((0, 0))
 ```
 
-`Posterior` requires a model `"c"` fit with `keep=True`. It validates the
+The final segmentation is available as `segmentation.segmap`. `Posterior`
+requires a model `"c"` fit with `keep=True`. It validates the
 iteration, spatial, component, and feature dimensions supplied by FlexMM and
 works with backend-specific feature-grid sizes.
 
