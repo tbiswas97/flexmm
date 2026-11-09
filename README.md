@@ -12,8 +12,8 @@ and:
 
 Biswas, T. & Coen-Cagli, R. A probabilistic model of visual segmentation explains early visual cortical dynamics. NeurIPS (2026)
 
-FlexMM segments a caller-provided image by fitting flexible mixture models to
-features from VGG-19, AlexNet, or DINOv3. 
+FlexMM segments the input image by fitting flexible mixture models to
+features from VGG-19, AlexNet, or DINOv3 (DINOv3 weights must be pre-installed from Meta AI) . 
 
 This repository does not include datasets or model weights
 
