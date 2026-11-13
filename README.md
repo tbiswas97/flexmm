@@ -1,12 +1,21 @@
 # FlexMM
 
-FlexMM segments a caller-provided image by fitting flexible mixture models to
-features from VGG-19, AlexNet, or DINOv3. Its posterior API consumes the fitted
-model's dynamic output shapes, so it does not depend on an experiment-specific
-response file or a fixed feature-grid size.
+This work is an implementation of:
 
-This repository is an inference library. It does not include datasets, model
-weights, or scripts that claim to reproduce paper tables and figures.
+Vacher, J., Launay, C. & Coen-Cagli, R. Flexibly Regularized Mixture Models and Application to Image Segmentation. Neural Networks 149, 107–123 (2022).
+
+With applications to: 
+
+Biswas, T., Vacher J., Molholm S., Mamassian P., & Coen-Cagli, R. Natural scene segmentation dynamics reveal iterative bayesian inference. bioRxiv (2026)
+
+and:
+
+Biswas, T. & Coen-Cagli, R. A probabilistic model of visual segmentation explains early visual cortical dynamics. NeurIPS (2026)
+
+FlexMM segments the input image by fitting flexible mixture models to
+features from VGG-19, AlexNet, or DINOv3 (DINOv3 weights must be pre-installed from Meta AI) . 
+
+This repository does not include datasets or model weights
 
 ## Installation
 
