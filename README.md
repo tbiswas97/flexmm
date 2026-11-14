@@ -2,24 +2,24 @@
 
 This work is an implementation of:
 
-Vacher, J., Launay, C. & Coen-Cagli, R. Flexibly Regularized Mixture Models and Application to Image Segmentation. Neural Networks 149, 107–123 (2022).
+_Vacher, J., Launay, C. & Coen-Cagli, R. Flexibly Regularized Mixture Models and Application to Image Segmentation. Neural Networks 149, 107–123 (2022)._
 
 With applications to: 
 
-Biswas, T., Vacher J., Molholm S., Mamassian P., & Coen-Cagli, R. Natural scene segmentation dynamics reveal iterative bayesian inference. bioRxiv (2026)
+_Biswas, T., Vacher J., Molholm S., Mamassian P., & Coen-Cagli, R. Natural scene segmentation dynamics reveal iterative bayesian inference. bioRxiv (2026)_
 
 and:
 
-Biswas, T. & Coen-Cagli, R. A probabilistic model of visual segmentation explains early visual cortical dynamics. NeurIPS (2026)
+_Biswas, T. & Coen-Cagli, R. A probabilistic model of visual segmentation explains early visual cortical dynamics. NeurIPS (2026)_
 
-FlexMM segments the input image by fitting flexible mixture models to
-features from VGG-19, AlexNet, or DINOv3 (DINOv3 weights must be pre-installed from Meta AI) . 
+Segments an image after extracting features from
+VGG-19, AlexNet, or DINOv3 (DINOv3 weights must be pre-installed). 
 
-This repository does not include datasets or model weights
+Posterior inference (in `flexmm/posterior.py`) generates neural predictions. 
 
 ## Installation
 
-FlexMM requires Python 3.11 or newer.
+Requires Python 3.11 or newer.
 
 ```bash
 python -m venv .venv
@@ -28,31 +28,30 @@ python -m pip install --upgrade pip
 python -m pip install .
 ```
 
-For development checks, install `.[dev]` instead.
 
 ## Quickstart with VGG-19
 
-Load an image as a NumPy array with shape `(height, width)`, `(height, width,
-3)`, or `(height, width, 4)`. FlexMM normalizes numeric images to `float32`
-RGB in the range `[0, 1]`. VGG-19 is the default backend and the recommended
-starting point; Torchvision downloads its pretrained weights on first use.
 
-```python
-from pathlib import Path
+import numpy as np
+from flexmm import SegmentationMap
+from PIL import Image 
 
-import matplotlib.image as mpimg
-
-from flexmm import Posterior, SegmentationMap
-
-image = mpimg.imread("/path/to/your/image.png")
+image = np.load("examples/example-elk-im-arr.npy")
 segmentation = SegmentationMap(image, image_id="example")
 segmentation.fit_model(
-    model="c",
-    n_components=4,
-    keep=True,
-    deepnet="vgg19",
+    n_components=5, #user provided
+    keep=True, #retains dynamics
+    deepnet="vgg19", #options are vgg19, alexnet, dinov3
 )
+```
 
+The final segmentation is saved as `segmentation.segmap`. 
+
+`Posterior` requires a model `"c"` fit with `keep=True`. It validates the
+iteration, spatial, component, and feature dimensions supplied by FlexMM and
+works with backend-specific feature-grid sizes.
+
+```
 posterior = Posterior(
     segmentation,
     filekey=Path("outputs/example"),
@@ -60,11 +59,6 @@ posterior = Posterior(
 )
 means = posterior.analytical_mean((0, 0))
 ```
-
-The final segmentation is available as `segmentation.segmap`. `Posterior`
-requires a model `"c"` fit with `keep=True`. It validates the
-iteration, spatial, component, and feature dimensions supplied by FlexMM and
-works with backend-specific feature-grid sizes.
 
 ## DINOv3 backend
 
