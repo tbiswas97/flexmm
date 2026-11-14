@@ -60,8 +60,10 @@ Quantities in the NeurIPS paper can be
 posterior = Posterior(segmentation)
 
 pdf = posterior.pointwise_posterior((0,0)) #p^{(t)}(g \mid x) at origin or any point
+
 # mean at each pixel
 means = [posterior.analytical_mean((i, j)) for i in range(256) for j in range(256)]
+
 # variance at each pixel
 vars = [posterior.analytical_var((i, j)) for i in range(256) for j in range(256)]
 ```
