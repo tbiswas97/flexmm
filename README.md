@@ -1,4 +1,4 @@
-# FlexMM
+# Image segmentation with neural latents
 
 This work is an implementation of:
 
@@ -31,7 +31,7 @@ python -m pip install .
 
 ## Quickstart with VGG-19
 
-
+```
 import numpy as np
 from flexmm import SegmentationMap
 from PIL import Image 
@@ -51,16 +51,22 @@ segmentation.fit_model(
 
 The final segmentation is saved as `segmentation.segmap`. 
 
-`Posterior` requires `keep=True`. 
+## Posterior inference
+[11-13-2026] `Posterior` inference has only been tested for `keep=True`. 
+Quantities in the NeurIPS paper can be 
 
 ```
-posterior = Posterior(
-    segmentation,
-    filekey=Path("outputs/example"),
-    feature_index=0,
-)
-means = posterior.analytical_mean((0, 0))
+#input segmentation object
+posterior = Posterior(segmentation)
+
+pdf = posterior.pointwise_posterior((0,0)) #p^{(t)}(g \mid x) at origin or any point
+# mean at each pixel
+means = [posterior.analytical_mean((i, j)) for i in range(256) for j in range(256)]
+# variance at each pixel
+vars = [posterior.analytical_var((i, j)) for i in range(256) for j in range(256)]
 ```
+
+
 
 ## DINOv3 backend
 
@@ -92,7 +98,7 @@ segmentation.fit_model(
 
 For AlexNet (Krizhevsky, 2012), use `deepnet="alexnet"`. 
 AlexNet requires a 227 by 227 input. 
-As of 11/2026, only the first layer of AlexNet has been tested for feature extraction.
+[11-13-2026] only the first layer of AlexNet has been tested for feature extraction.
 
 ## Development
 
