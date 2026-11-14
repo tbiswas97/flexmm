@@ -37,6 +37,10 @@ from flexmm import SegmentationMap
 from PIL import Image 
 
 image = np.load("examples/example-elk-im-arr.npy")
+
+#an initial condition with quality segmentation is provided
+initial_condition = np.load("examples/example-elk-prior.npy")
+
 segmentation = SegmentationMap(image, image_id="example")
 segmentation.fit_model(
     n_components=5, #user provided
@@ -47,9 +51,7 @@ segmentation.fit_model(
 
 The final segmentation is saved as `segmentation.segmap`. 
 
-`Posterior` requires a model `"c"` fit with `keep=True`. It validates the
-iteration, spatial, component, and feature dimensions supplied by FlexMM and
-works with backend-specific feature-grid sizes.
+`Posterior` requires `keep=True`. 
 
 ```
 posterior = Posterior(
@@ -62,39 +64,35 @@ means = posterior.analytical_mean((0, 0))
 
 ## DINOv3 backend
 
-DINOv3 is optional at runtime but its weights must be downloaded separately
-under Meta's terms. FlexMM never searches for or downloads DINOv3 weights.
-Pass an explicit local path:
+DINOv3 (Sim&eacute;oni, 2025) is a state-of-the-art vision transformer.
+To use, please pass an explicit local path after downloading weights from Meta AI
+
+FlexMM with DINOv3 outputs outputs an (h//16, w//16) array for (h,w) sized inputs,
+due to the patch sizes used in transformers, i.e. to get a (h,w) sized output, 
+the input must be expanded up to (h*16,w*16). When patch sizes are a neighborhood of 
+pixels, segmentation may be qualitatively improved with `spatial_smoothing=False`. 
 
 ```python
 segmentation.fit_model(
-    model="c",
     n_components=4,
     keep=True,
-    layer_stop=3,
+    layer_stop=3, #e.g. use the 3rd entry in feature_layers below
     deepnet="dinov3",
     backend_kwargs={
         "weights": "/absolute/path/to/dinov3_vitb16_weights.pth",
         "model_name": "dinov3_vitb16",
-        "feature_layers": [2, 8, 11],
+        "feature_layers": [2, 8, 11], #early, middle, and late layers
         "device": "cpu",
     },
+    spatial_smoothing=False
 )
 ```
 
-The image height and width must be divisible by the selected DINOv3 patch
-size (16 by default). Supported aliases are `vgg19`, `alexnet`, and `dinov3`.
-AlexNet requires a 227 by 227 input.
+## AlexNet backend
 
-## Public API
-
-- `SegmentationMap(image, image_id=0)` accepts only caller-provided images.
-- `SegmentationMap.fit_model(...)` fits FlexMM and stores its dynamic outputs.
-- `Posterior(fitted_model, filekey, feature_index, ...)` calculates posterior
-  summaries and can serialize analysis output.
-
-Backend-specific arguments belong in `backend_kwargs`; paths are never
-hard-coded to a developer machine.
+For AlexNet (Krizhevsky, 2012), use `deepnet="alexnet"`. 
+AlexNet requires a 227 by 227 input. 
+As of 11/2026, only the first layer of AlexNet has been tested for feature extraction.
 
 ## Development
 
@@ -105,7 +103,7 @@ python -m build
 twine check dist/*
 ```
 
-The automated test suite uses generated arrays and does not require example
+Tests use generated arrays and do not require example
 images, downloaded weights, or network access.
 
 ## Licensing and attribution
@@ -113,11 +111,4 @@ images, downloaded weights, or network access.
 The vendored `dinov3/` inference subset is derived from Meta's DINOv3 project
 and remains governed by the [DINOv3 License](LICENSE.md). Some FlexMM
 mixture-model source files contain GPLv3 provenance notices. Review
-[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) before redistribution and
-confirm that you have authority to release the complete combined work.
-
-## Citation
-
-Software citation metadata is provided in [CITATION.cff](CITATION.cff). Add
-the accepted paper's final bibliographic entry and de-anonymized URL before
-announcing the repository alongside the paper.
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) before redistribution.
