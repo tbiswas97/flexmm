@@ -53,8 +53,6 @@ class Posterior:
                 + ", ".join(missing)
                 + '; fit model="c" with keep=True before constructing Posterior'
             )
-        if filekey is None or str(filekey) == "":
-            raise ValueError("filekey must be a non-empty path prefix")
         if isinstance(feature_index, (bool, np.bool_)) or not isinstance(
             feature_index, (int, np.integer)
         ):
@@ -181,7 +179,7 @@ class Posterior:
         freeze_params=False,
         mix=True,
         _map=False,
-        include_transient=False,
+        include_transient=True,
     ):
         """Return posterior means at a feature-grid coordinate."""
         row, col = self._validate_coord(coord)
@@ -225,7 +223,7 @@ class Posterior:
         freeze_params=False,
         mix=True,
         _map=False,
-        include_transient=False,
+        include_transient=True,
     ):
         """Return posterior variances at a feature-grid coordinate."""
         row, col = self._validate_coord(coord)
@@ -397,6 +395,10 @@ class Posterior:
             "feature_index": self.feature_index,
         }
         if pickle:
+            
+            if self.filekey is None or str(self.filekey) == "":
+                raise ValueError("filekey must be a non-empty path prefix")
+
             output_path = Path(f"{self.filekey}_neural_statistics.pkl")
             with output_path.open("wb") as handle:
                 pickle_module.dump(result, handle)
