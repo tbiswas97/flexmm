@@ -53,7 +53,7 @@ The final segmentation is saved as `segmentation.segmap`.
 
 ## Posterior inference
 [11-13-2026] `Posterior` inference has only been tested for `keep=True`. 
-Quantities in the NeurIPS paper can be 
+Quantities in the NeurIPS paper can be found using the functions below:
 
 ```
 #input segmentation object
