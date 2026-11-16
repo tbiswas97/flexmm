@@ -13,7 +13,7 @@ and:
 _Biswas, T. & Coen-Cagli, R. A probabilistic model of visual segmentation explains early visual cortical dynamics. NeurIPS (2026)_
 
 Segments an image after extracting features from
-VGG-19, AlexNet, or DINOv3 (DINOv3 weights must be pre-installed). 
+VGG-19, AlexNet, or DINOv3 (DINOv3 weights should be pre-installed). 
 
 Posterior inference (in `flexmm/posterior.py`) generates neural predictions. 
 
@@ -77,7 +77,7 @@ To use, please pass an explicit local path after downloading weights from Meta A
 
 FlexMM with DINOv3 outputs outputs an (h//16, w//16) array for (h,w) sized inputs,
 due to the patch sizes used in transformers, i.e. to get a (h,w) sized output, 
-the input must be expanded up to (h*16,w*16). When patch sizes are a neighborhood of 
+the input should be expanded up to (h*16,w*16). When patch sizes are a neighborhood of 
 pixels, segmentation may be qualitatively improved with `spatial_smoothing=False`. 
 
 ```python
