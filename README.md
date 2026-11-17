@@ -1,21 +1,21 @@
 # Image segmentation with neural latents
 
-This work is an implementation of:
+This work is an extended implementation of:
 
-_Vacher, J., Launay, C. & Coen-Cagli, R. Flexibly Regularized Mixture Models and Application to Image Segmentation. Neural Networks 149, 107–123 (2022)._
+[_Vacher, J., Launay, C. & Coen-Cagli, R. Flexibly Regularized Mixture Models and Application to Image Segmentation. Neural Networks 149, 107–123 (2022)._](https://jonathanvacher.github.io/pdf/vacher2022flexibly.pdf)
 
 With applications to: 
 
-_Biswas, T., Vacher J., Molholm S., Mamassian P., & Coen-Cagli, R. Natural scene segmentation dynamics reveal iterative bayesian inference. bioRxiv (2026)_
+[_Biswas, T., Vacher J., Molholm S., Mamassian P., & Coen-Cagli, R. Natural scene segmentation dynamics reveal iterative bayesian inference. bioRxiv (2026)_](https://www.biorxiv.org/content/10.64898/2026.01.30.702842v2)
 
 and:
 
-_Biswas, T. & Coen-Cagli, R. A probabilistic model of visual segmentation explains early visual cortical dynamics. NeurIPS (2026)_
+[_Biswas, T. & Coen-Cagli, R. A probabilistic model of visual segmentation explains early visual cortical dynamics. NeurIPS (2026)_](https://arxiv.org/abs/2611.13316)
 
 Segments an image after extracting features from
 VGG-19, AlexNet, or DINOv3 (DINOv3 weights should be pre-installed). 
 
-Posterior inference (in `flexmm/posterior.py`) generates neural predictions. 
+Posterior inference (in [`flexmm/posterior.py`](flexmm/posterior.py)) generates neural predictions. 
 
 ## Installation
 
@@ -31,7 +31,7 @@ python -m pip install .
 
 ## Quickstart with VGG-19
 
-```
+```python
 import numpy as np
 from flexmm import SegmentationMap
 from PIL import Image 
@@ -51,34 +51,16 @@ segmentation.fit_model(
 
 The final segmentation is saved as `segmentation.segmap`. 
 
-## Posterior inference
-[11-13-2026] `Posterior` inference has only been tested for `keep=True`. 
-Quantities in the NeurIPS paper can be found using the functions below:
-
-```
-#input segmentation object
-posterior = Posterior(segmentation)
-
-pdf = posterior.pointwise_posterior((0,0)) #p^{(t)}(g \mid x) at origin or any point
-
-# mean at each pixel
-means = [posterior.analytical_mean((i, j)) for i in range(256) for j in range(256)]
-
-# variance at each pixel
-vars = [posterior.analytical_var((i, j)) for i in range(256) for j in range(256)]
-```
-
-
 
 ## DINOv3 backend
 
 DINOv3 (Sim&eacute;oni, 2025) is a state-of-the-art vision transformer.
-To use, please pass an explicit local path after downloading weights from Meta AI
+To use, please pass an explicit local path after downloading weights from [Meta AI](https://ai.meta.com/research/dinov3/).
+DINOv3 with `spatial_smoothing=False` was used in Biswas et. al 2026, [*biorXiv*](https://www.biorxiv.org/content/10.64898/2026.01.30.702842v2)
 
-FlexMM with DINOv3 outputs outputs an (h//16, w//16) array for (h,w) sized inputs,
-due to the patch sizes used in transformers, i.e. to get a (h,w) sized output, 
-the input should be expanded up to (h*16,w*16). When patch sizes are a neighborhood of 
-pixels, segmentation may be qualitatively improved with `spatial_smoothing=False`. 
+FlexMM with DINOv3 outputs outputs an `(h//16, w//16)` array for `(h,w)` sized inputs,
+due to the patch sizes used in transformers, i.e. to get a `(h,w)` sized output, 
+the input should be expanded up to `(h\*16,w\*16)`. 
 
 ```python
 segmentation.fit_model(
@@ -96,10 +78,29 @@ segmentation.fit_model(
 )
 ```
 
+## Posterior inference
+[11-13-2026] `Posterior` inference has only been tested for `keep=True`. 
+Quantities in the NeurIPS paper can be found using the functions below:
+
+```python
+#input segmentation object
+posterior = Posterior(segmentation)
+
+pdf = posterior.pointwise_posterior((0,0)) #p^{(t)}(g \mid x) at origin or any point
+
+# mean at each pixel
+means = [posterior.analytical_mean((i, j)) for i in range(256) for j in range(256)]
+
+# variance at each pixel
+vars = [posterior.analytical_var((i, j)) for i in range(256) for j in range(256)]
+```
+
+
 ## AlexNet backend
 
-For AlexNet (Krizhevsky, 2012), use `deepnet="alexnet"`. 
+For AlexNet (Krizhevsky et. al 2012), use `deepnet="alexnet"`. 
 AlexNet requires a 227 by 227 input. 
+
 [11-13-2026] only the first layer of AlexNet has been tested for feature extraction.
 
 ## Development
