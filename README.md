@@ -34,8 +34,8 @@ python -m pip install .
 ```python
 import numpy as np
 from flexmm import SegmentationMap
-from PIL import Image 
 
+#Load image as array
 image = np.load("examples/example-elk-im-arr.npy")
 
 #an initial condition with quality segmentation is provided
@@ -43,7 +43,7 @@ initial_condition = np.load("examples/example-elk-prior.npy")
 
 segmentation = SegmentationMap(image, image_id="example")
 segmentation.fit_model(
-    n_components=5, #user provided
+    n_components=5, #user provided, must be 5 if using initial_condition
     keep=True, #retains dynamics
     deepnet="vgg19", #options are vgg19, alexnet, dinov3
 )
